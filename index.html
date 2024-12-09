@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia STS</title>
+    <style>
+        /* Reset básico para evitar inconsistências entre navegadores */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            overflow-x: hidden; /* Evitar rolagem horizontal */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 100px; /* Mais espaço para o cabeçalho fixo */
+            background: linear-gradient(to bottom, #ffffff, #000000); /* Degradê de azul */
+            transition: background 0.3s ease;
+        }
+
+        /* Estilo do conteúdo principal */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        header {
+            background-color: #000;
+            color: #c6fd00;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        header img {
+            width: 150px;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin-top: 0;
+            text-align: center;
+            background-color: #000;
+            padding: 10px 0;
+            display: inline-block;
+            border-radius: 5px;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #bbff00;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 5px 10px;
+            display: inline-block;
+            background-color: #000;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #bbff00;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            min-height: calc(100vh - 160px);
+            color: white;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Container geral para o conteúdo das abas */
+        .content-container {
+            max-width: 1200px;
+            margin: 150px auto; /* Aumentando mais a margem superior para abaixar os containers */
+            padding: 30px;
+            background-color: #222;
+            border-radius: 15px;
+            border: 2px solid #bbff00;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            text-align: center; /* Centraliza o texto */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: auto;
+        }
+
+        /* Estilo específico para a aba Home */
+        #home {
+            text-align: center;
+        }
+
+        /* Container para as imagens */
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px; /* Espaçamento maior entre as imagens */
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .image-container img {
+            width: 300px; /* Aumentando o tamanho das imagens */
+            height: auto;
+            border: 8px solid #000000; /* Borda preta */
+            border-radius: 10px; /* Bordas arredondadas */
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Efeito ao passar o mouse sobre as imagens */
+        .image-container img:hover {
+            transform: scale(1.1); /* Aumenta o tamanho da imagem ao passar o mouse */
+        }
+
+        footer {
+            text-align: center;
+            font-size: 14px;
+            background-color: #000;
+            color: white;
+            padding: 15px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        /* Responsividade para dispositivos móveis */
+        @media screen and (max-width: 768px) {
+            nav ul {
+                padding: 10px;
+            }
+
+            nav ul li {
+                display: block;
+                margin: 10px 0;
+            }
+
+            header img {
+                width: 120px;
+            }
+
+            .tab-content {
+                padding: 10px;
+            }
+
+            /* Menu tipo hambúrguer */
+            .menu-toggle {
+                display: block;
+                background-color: #000;
+                color: #fff;
+                padding: 10px;
+                cursor: pointer;
+                text-align: center;
+                border-radius: 5px;
+            }
+
+            nav ul {
+                display: none;
+                width: 100%;
+                text-align: left;
+            }
+
+            nav ul.active {
+                display: block;
+            }
+
+            nav ul li {
+                margin-left: 20px;
+            }
+
+            /* Ajuste nas imagens para caberem em telas pequenas */
+            .image-container img {
+                width: 100%; /* Tamanho menor em telas pequenas */
+                max-width: 400px;
+                margin: 10px 0;
+            }
+        }
+
+        /* Estilo para o letreiro */
+        .ticker-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            background-color: #000;
+            color: #bbff00;
+            padding: 20px 0; /* Reduzindo o espaçamento superior */
+            margin-top: 180px; /* Aumentando a distância de margem do topo para abaixar mais */
+        }
+
+        .ticker-text {
+            position: absolute;
+            white-space: nowrap;
+            font-size: 24px; /* Diminuindo o tamanho da fonte */
+            animation: ticker 15s linear infinite;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Estilos para formulários e outros elementos */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #bbff00;
+        }
+
+        input[type="text"], input[type="date"], input[type="time"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #bbff00;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            background-color: #222;
+            color: #fff;
+        }
+
+        button[type="submit"] {
+            padding: 10px;
+            background-color: #bbff00;
+            border: none;
+            font-size: 18px;
+            color: #000;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #c6fd00;
+        }
+
+        .service-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            font-size: 18px;
+        }
+
+        /* Container para as imagens da aba de promoções */
+        .promo-images {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .promo-image {
+            position: relative;
+            width: 30%; /* Tamanho das imagens */
+        }
+
+        .promo-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .promo-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mainContent" class="main-content">
+        <!-- Cabeçalho e Navegação -->
+        <header>
+            <img src="https://thumbs.dreamstime.com/b/projeto-da-barbearia-41949933.jpg" alt="Logo Barbearia">
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="showTab('home')">HOME</a></li>
+                    <li><a href="#" onclick="showTab('servicos')">SERVIÇOS</a></li>
+                    <li><a href="#" onclick="showTab('agendamento')">AGENDAMENTO</a></li>
+                    <li><a href="#" onclick="showTab('promocoes')">PROMOÇÕES</a></li>
+                    <li><a href="#" onclick="showTab('contato')">CONTATO</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Aba Home -->
+            <div id="home" class="tab-content">
+                <h2>Bem-vindo à Barbearia Elite</h2>
+                <p>Transforme o seu visual conosco! Oferecemos cortes modernos, serviços de barba e um ambiente acolhedor para você se sentir em casa.</p>
+
+                <!-- Imagens Centralizadas -->
+                <div class="image-container">
+                    <img src="https://www.shutterstock.com/image-photo/black-white-photography-barbershop-chairs-600nw-1968443884.jpg" alt="Corte de cabelo">
+                    <img src="https://images.unsplash.com/photo-1679260981461-b2bbda2707ef?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGJhcmJlYXJpYXxlbnwwfHwwfHx8MA%3D%3D" alt="Barba bem feita">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1YxH7VxbssNtOPINvVc9mudVEgg3h8JIRHmgS8kjmVMZEL5pb9G6lC7dSjmhjMkJGhR4&usqp=CAU" alt="Ambiente de barbearia">
+                </div>
+
+                <!-- Letreiro -->
+                <div class="ticker-container">
+                    <div class="ticker-text">
+                        CORTES DE CABELO E BARBA COM QUALIDADE E ATENDIMENTO EXCLUSIVO!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba Serviços -->
+            <div id="servicos" class="tab-content">
+                <div class="content-container">
+                    <h2>Serviços</h2>
+                    <p>Na Barbearia Elite, oferecemos uma ampla gama de serviços para cuidar do seu visual:</p>
+                    <ul class="service-list">
+                        <li>Corte de cabelo moderno e clássico</li>
+                        <li>Barba e bigode</li>
+                        <li>Tratamentos capilares</li>
+                        <li>Design de sobrancelhas</li>
+                        <li>Massagem relaxante</li>
+                    </ul>
+
+                    <!-- Imagem na aba de serviços -->
+                    <div class="image-container">
+                        <img src="promoçãoo.png.png" alt="Promoção Especial">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba Agendamento -->
+            <div id="agendamento" class="tab-content">
+                <div class="content-container">
+                    <h2>Agende Seu Horário</h2>
+                    <p>Para agendar um horário com nossos profissionais, preencha os dados abaixo:</p>
+                    <form>
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" name="nome" required>
+                        <label for="data">Data:</label>
+                        <input type="date" id="data" name="data" required>
+                        <label for="hora">Hora:</label>
+                        <input type="time" id="hora" name="hora" required>
+                        <button type="submit">Agendar</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Aba Promoções -->
+            <div id="promocoes" class="tab-content">
+                <div class="content-container">
+                    <h2>Promoções</h2>
+                    <p>Fique atento às nossas promoções especiais!</p>
+
+                    <!-- Container para as imagens e informações -->
+                    <div class="promo-images">
+                        <div class="promo-image">
+                            <img src="555 (2).png" alt="Promoção 1">
+                            <div class="promo-info">Promoção 1: Pai e Filho por um preço especial</div>
+                        </div>
+                        <div class="promo-image">
+                            <img src="eee.png" alt="Promoção 2">
+                            <div class="promo-info">Promoção 2: Promoções para grupos ou eventos</div>
+                        </div>
+                        <div class="promo-image">
+                            <img src="333.png" alt="Promoção 3">
+                            <div class="promo-info">Promoção 3: Descontos para corte e barba</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba Contato -->
+            <div id="contato" class="tab-content">
+                <div class="content-container">
+                    <h2>Contato</h2>
+                    <p>Para mais informações, entre em contato conosco através do telefone ou e-mail:</p>
+                    <p>Telefone: (11) 1234-5678</p>
+                    <p>Email: contato@barbearia.com.br</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Barbearia Elite - Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        // Função para alternar entre as abas
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            const activeTab = document.getElementById(tabId);
+            activeTab.classList.add('active');
+        }
+
+        // Mostrar a aba inicial (Home)
+        document.getElementById('home').classList.add('active');
+    </script>
+
+</body>
+</html>
